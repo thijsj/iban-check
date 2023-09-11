@@ -30,6 +30,7 @@ def valid_length(iban):
 def is_valid(full_iban):
     full_iban = remove_spaces(full_iban)
     valid_length(full_iban)
+    return True
 
 
 # def iban(ibanAccount, countryCode):
@@ -56,13 +57,14 @@ def run_tests():
         "TR43 0006 2917 8739 8979 8834 33",
     ]
     for iban in examples:
-        assert(is_valid(iban))
+        assert is_valid(iban), iban
     def raises_valueerror(iban):
         try:
             is_valid(iban)
         except ValueError:
             return
-        raise AssertionError('Expected ValueError')
+        raise AssertionError(f'Expected ValueError, for "{iban}"')
+    raises_valueerror('NL12BANK1234567890123456789012345678901234567890')
 
 
 run_tests()
