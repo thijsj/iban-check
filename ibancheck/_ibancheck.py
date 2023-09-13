@@ -18,19 +18,46 @@
 
 __all__ = ["is_valid"]
 
+from ._specs import specs_per_country
+
 def remove_spaces(a_string):
     return ''.join(c for c in a_string.strip() if not c in {' ', '\n', '\t'})
 
-def valid_length(iban):
-    if 14 <= len(iban) <= 34:
-        return
-    # TODO there are specific lengths per country. Ignoring for now
-    raise ValueError(f'Length of "{iban}" not correct.')
+def iban_repr(iban):
+    s = remove_spaces(iban)
+    return ' '.join(s[i:i+4] for i in range(0, len(s), 4))
+
+def get_spec(country):
+    try:
+        return specs_per_country[country]
+    except KeyError:
+        raise ValueError(f'Country code {country!r} is unknown.')
+
+def _length_valid(spec, bban, iban):
+    if len(bban) != spec.bban_length:
+        raise ValueError(f'Length of {iban_repr(iban)!r} not correct.')
 
 def is_valid(full_iban):
     full_iban = remove_spaces(full_iban)
-    valid_length(full_iban)
+    country = full_iban[:2]
+    checksum = full_iban[2:4]
+    bban = full_iban[4:]
+    spec = get_spec(country)
+    _length_valid(spec, bban, full_iban)
+    c = as_number(bban+country+checksum) % 97
+    if c != 1:
+        raise ValueError(f'Inccorrect checksum in {iban_repr(full_iban)!r}.')
     return True
+
+def as_number(a_str):
+    return  int(''.join(char if char.isdigit() else str(ord(char) - ord('A') + 10) for char in a_str))
+
+def create_iban(country, bban):
+    spec = get_spec(country)
+    bban = remove_spaces(bban)
+    _length_valid(spec, bban, bban)
+    checksum = '{0:02d}'.format(98 - as_number(bban+country+'00') % 97)
+    return iban_repr(country+checksum+bban)
 
 
 # def iban(ibanAccount, countryCode):
@@ -49,6 +76,9 @@ def is_valid(full_iban):
 #     iban(ibanAccount.replace(' ','').upper(), 'NL')
 
 def run_tests():
+    def eq(a,b):
+        assert a == b, f'Expected {a} == {b}'
+
     examples = [ # from fakeiban.org
         "DE54 5502 0000 8837 8132 12",
         "NL80 ABNA 4353 3681 41",
@@ -58,13 +88,33 @@ def run_tests():
     ]
     for iban in examples:
         assert is_valid(iban), iban
-    def raises_valueerror(iban):
+
+    def raises_valueerror(iban, ve=None):
         try:
             is_valid(iban)
-        except ValueError:
+        except ValueError as e:
+            if ve is not None:
+                eq(ve, str(e))
             return
         raise AssertionError(f'Expected ValueError, for "{iban}"')
-    raises_valueerror('NL12BANK1234567890123456789012345678901234567890')
+
+    raises_valueerror('NL12BANK12345678', "Length of 'NL12 BANK 1234 5678' not correct.")
+    raises_valueerror("DE55 5502 0000 8837 8132 12")
+    raises_valueerror("NL81 ABNA 4353 3681 41")
+    raises_valueerror("MC33 1450 8000 4077 3871 9884 O33")
+    raises_valueerror("GB22 BARC 2003 5368 3548 42")
+    raises_valueerror("TR44 0006 2917 8739 8979 8834 33", "Inccorrect checksum in 'TR44 0006 2917 8739 8979 8834 33'.")
+    raises_valueerror("XX03 0004 0005 0006", "Country code 'XX' is unknown.")
+    eq(10, as_number('A'))
+    eq(1102, as_number('1A2'))
+    eq(1, as_number("550200008837813212DE54") % 97)
+
+    eq('ABCD E', iban_repr('ABCDE'))
+    for iban in examples:
+        eq(iban, iban_repr(iban))
+
+    eq("NL80 ABNA 4353 3681 41", create_iban("NL", "ABNA 4353 3681 41"))
+    eq("NL80 ABNA 4353 3681 41", create_iban("NL", "ABNA4353368141"))
 
 
 run_tests()
