@@ -15,14 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-
+from pkg_resources import resource_stream
+import json
 
 __all__ = ['specs_per_country']
 
 specs_per_country = {}
 
 class Spec:
-    def __init__(self, country, country_name, bban_length):
+    def __init__(self, country, country_name, bban_length, **_):
         self.country = country
         if len(country) != 2 or not isinstance(country, str) or not set(country).issubset('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
             raise TypeError("Incorrect format")
@@ -37,8 +38,7 @@ class Spec:
 
 # Specification is based on https://www.swift.com/sites/default/files/documents/iban_registry_0.pdf
 
-Spec('DE', 'Germany', 18)
-Spec('GB', 'United Kingdom', 18)
-Spec('MC', 'Monaco', 23)
-Spec('NL', 'Netherlands (The)', 14)
-Spec('TR', 'Turkey', 22)
+for spec in json.load(resource_stream('ibancheck', 'registry_data.json')):
+    Spec(**spec)
+
+# TODO extract all spec from registry af SWIFT

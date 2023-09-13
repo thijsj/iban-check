@@ -1,0 +1,32 @@
+[
+    {
+        "country": "NL",
+        "country_name": "Netherlands (The)",
+        "bban_length": 14
+    },
+    {
+        "country": "DE",
+        "country_name": "Germany",
+        "bban_length": 18
+    },
+    {
+        "country": "GB",
+        "country_name": "United Kingdom",
+        "bban_length": 18
+    },
+    {
+        "country": "MC",
+        "country_name": "Monaco",
+        "bban_length": 23
+    },
+    {
+        "country": "NL",
+        "country_name": "Netherlands (The)",
+        "bban_length": 14
+    },
+    {
+        "country": "TR",
+        "country_name": "Turkey",
+        "bban_length": 22
+    }
+]

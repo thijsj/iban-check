@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-__all__ = ["is_valid"]
+__all__ = ["is_valid", "create_iban"]
 
 from ._specs import specs_per_country
 
@@ -55,6 +55,8 @@ def as_number(a_str):
 def create_iban(country, bban):
     spec = get_spec(country)
     bban = remove_spaces(bban)
+    if (diff := spec.bban_length - len(bban)) > 0:
+        bban = ('0' * diff) + bban
     _length_valid(spec, bban, bban)
     checksum = '{0:02d}'.format(98 - as_number(bban+country+'00') % 97)
     return iban_repr(country+checksum+bban)
@@ -115,6 +117,9 @@ def run_tests():
 
     eq("NL80 ABNA 4353 3681 41", create_iban("NL", "ABNA 4353 3681 41"))
     eq("NL80 ABNA 4353 3681 41", create_iban("NL", "ABNA4353368141"))
+
+    eq("TR43 0006 2917 8739 8979 8834 33", create_iban("TR", "6291 7873 9897 9883 433"))
+
 
 
 run_tests()
