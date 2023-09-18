@@ -4,6 +4,13 @@
 
 Use ibancheck to validate IBAN bank account numbers.
 
+### Usage
+
+There are currently to main purposes of this module:
+
+ 1. Validating an IBAN number: `is_valid("NL00 BANK 1122 3344 55")`. Will return True or raise a ValueError.
+ 1. Creating an IBAN number and create a checksum: `create_iban("NL", "BANK1122334455")`.
+
 
 ### Testing
 

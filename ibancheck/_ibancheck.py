@@ -62,21 +62,6 @@ def create_iban(country, bban):
     return iban_repr(country+checksum+bban)
 
 
-# def iban(ibanAccount, countryCode):
-#     print ''.join(char if char.isdigit() else str(ord(char) - ord('A') + 10) for char in ibanAccount + countryCode) + '00'
-#     n = int(''.join(char if char.isdigit() else str(ord(char) - ord('A') + 10) for char in ibanAccount + countryCode) + '00')
-#     print n
-#     print n%97
-#     c = 98 - n % 97
-#     print c
-#     print '%s%02d %s' % (countryCode, c, ' '.join(ibanAccount[i:i+4] for i in [0,4,8,12]))
-#
-# if __name__ == '__main__':
-#
-#     from sys import argv
-#     ibanAccount = argv[1] if argv[1:] else 'BANK0123456789'
-#     iban(ibanAccount.replace(' ','').upper(), 'NL')
-
 def run_tests():
     def eq(a,b):
         assert a == b, f'Expected {a} == {b}'
