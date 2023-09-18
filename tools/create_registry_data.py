@@ -57,7 +57,7 @@ if __name__ == '__main__':
         if m is None:
             print(f'No match for {columnname}, skipping')
             continue
-        if m is 'ignored':
+        if m == 'ignored':
             continue
         if not result:
             for i in range(len(c_data)):
