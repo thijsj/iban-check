@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ibancheck"
-version = "0.0.1"
+version = "0.1.0"
 description = "Check if a IBAN bank account number is valid"
 readme = "README.md"
 license = {file = "LICENSE"}
