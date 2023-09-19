@@ -7,7 +7,10 @@ name = "ibancheck"
 version = "0.1.1"
 description = "Check if a IBAN bank account number is valid"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = {
+    text = "GPLv3",
+    file = "LICENSE"
+}
 authors = [
     {name = "Thijs Janssen", email = "thijs@thijsj.nl"}
 ]
