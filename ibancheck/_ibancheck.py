@@ -105,6 +105,17 @@ def run_tests():
 
     eq("TR43 0006 2917 8739 8979 8834 33", create_iban("TR", "6291 7873 9897 9883 433"))
 
+    countries_with_incorrect_format_example = {'BI', 'EG', 'LY', 'SV', 'VA'}
+    countries_with_invalid_checksum_example = {'NI', 'RU', 'ST'}
+    for spec in specs_per_country.values():
+        expected = spec.examples['iban_format']
+        if spec.country in countries_with_incorrect_format_example:
+            expected = iban_repr(expected)
+        elif spec.country in countries_with_invalid_checksum_example:
+            raises_valueerror(expected)
+            continue
+        eq(expected, create_iban(spec.country, spec.examples['iban'][4:]))
+
 
 
 run_tests()

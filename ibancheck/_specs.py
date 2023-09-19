@@ -23,7 +23,7 @@ __all__ = ['specs_per_country']
 specs_per_country = {}
 
 class Spec:
-    def __init__(self, country, country_name, bban_length, **_):
+    def __init__(self, country, country_name, bban_length, **remainder):
         self.country = country
         if len(country) != 2 or not isinstance(country, str) or not set(country).issubset('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
             raise TypeError("Incorrect format")
@@ -35,6 +35,10 @@ class Spec:
         if bban_length < 10 or bban_length > 30:
             raise TypeError("Incorrect format")
         specs_per_country[country] = self
+        self.examples = {}
+        for k,v in remainder.items():
+            if k.endswith('_example'):
+                self.examples[k.replace("_example", '')] = v
 
 # Specification is based on https://www.swift.com/sites/default/files/documents/iban_registry_0.pdf
 
